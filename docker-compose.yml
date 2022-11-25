@@ -4,8 +4,9 @@ services:
   app:
     build: ./
     ports:
-      - "80:3000"
+      - "3000:3000"
     init: true # See https://mzqvis6akmakplpmcjx3.hatenablog.com/entry/2020/11/10/231047
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
     environment:
@@ -20,6 +21,34 @@ services:
     volumes:
       - es-data:/usr/share/elasticsearch/data
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.2.0
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+
+  nginx:
+    image: nginx:1.23.2-alpine
+    volumes:
+      - ./proxy/conf.d:/etc/nginx/conf.d
+      - ./proxy/letsencrypt:/etc/letsencrypt
+      - /var/www/html:/var/www/html
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TZ: "Asia/Tokyo"
+    restart: always
+
+  certbot:
+    image: certbot/certbot:v1.32.0
+    volumes:
+      - ./proxy/letsencrypt:/etc/letsencrypt
+      - ./proxy/log_letsencrypt:/var/log/letsencrypt
+      - /var/www/html:/var/www/html
+    command: [ "--version" ]
 
 volumes:
   es-data:

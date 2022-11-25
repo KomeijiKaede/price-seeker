@@ -1,51 +1,176 @@
 const express = require('express')
 const http = require('http')
 const router = express.Router()
+const request = require('request')
+const config = process.env
 
-router.get('/test', (req, res, next) => {
-  const param = { test: 'success' }
-  res.header('Content-Type', 'application/json; charset=utf-8')
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-  res.send(param)
-})
+const es = require('./esClient')
 
-router.post('/post', (req, resp, next) => {
+const host = `http://${config.API_HOST}:${config.API_PORT}`
+
+/*
+router.get('/submit', (req, resp, next) => {
   const options = {
-    host: 'http://elasticsearch',
-    port: '9200',
-    path: '/price/_doc/',
-    method: "POST",
+    url: `${host}/price/_doc/`,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    json: {
+      name: req.query.name,
+      type: req.query.type,
+      price: req.query.price,
+      date: new Date()
+    }
+  }
+
+  request.post(options, (err, res, body) => {
+    resp.send(body)
+  })
+})
+*/
+
+/*
+router.get('/register_item', (req, resp, next) => {
+  // すでに登録されていないかチェック
+  // es.search({
+  //   index: 'items',
+  //   body: {
+  //     query: {
+  //       match: { 'name': req.body.name }
+  //     }
+  //   }
+  // })
+  //   .then(res => resp.send(res.body.hits.total['value'].toString()))
+  //   .catch(err => resp.send(err))
+  //   .finally(() => next())
+
+  const options = {
+    url: `${host}/items/_doc/`,
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    json: {
+      name: req.query.name,
+      category: req.query.category,
+      subcategory: req.query.subcategory,
+    }
+  }
+
+  request.post(options, (err, res, body) => {
+    resp.send(body)
+  })
+})
+*/
+
+router.get('/getitems', (req, resp, next) => {
+  const options = {
+    url: `${host}/items/_search?size=1000`,
     headers: {
       'Content-Type': 'application/json',
       'X-Requested-With': 'XMLHttpRequest'
     }
   }
-  http.request(options, (res) => {
-    res.setEncoding('utf8')
 
-    res.on('data', (chunk) => {
-      resp.send(chunk)
-    })
+  request.get(options, (err, res, body) => {
+    resp.send(body)
   })
-  req.on('error', (err) => {
-    resp.send(err)
-  })
-  req.write()
-  req.end()
 })
 
+/*
+router.get('/delete', (req, resp, next) => {
+  const options = {
+    url: `${host}/price/_doc/${req.query.id}`
+  }
+
+  request.delete(options, (err, res, body) => {
+    resp.send(body)
+  })
+})
+*/
+
+router.get('/item_list', (req, resp, next) => {
+  es.search({
+    index: 'items',
+    body: {
+      size: 1000,
+      query: {
+        match: {
+          'subcategory': req.query.subcategory
+        }
+      }
+    }
+  })
+    .then(res => resp.send(res.body))
+    .catch(err => resp.send(err))
+    .finally(() => next())
+})
+
+// router.post('/search', (req, resp, next) => {
+//   es.search({
+//     index: 'price',
+//     body: {
+//       size: req.body.size,
+//       sort: [{"date": {"order": "desc", format: "strict_date_optional_time_nanos"}}],
+//       query: {
+//         bool: {
+//           must: {
+//             term: { 'name': req.body.name },
+//           },
+//           filter: {
+//             range: {
+//               date: {
+//                 gte: req.body.gte,
+//                 lte: req.body.lte
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   })
+//     .then(res => resp.send(res.body))
+//     .catch(err => resp.send(err))
+//     .finally(() => next())
+// })
+
+router.post('/exists', (req, resp, next) => {
+  es.search({
+    index: 'items',
+    body: {
+      query: {
+        match: { 'name': req.body.name }
+      }
+    }
+  })
+    .then(res => resp.send(res.body.hits.total['value'].toString()))
+    .catch(err => resp.send(err))
+    .finally(() => next())
+})
+
+/*
 router.get('/search',  (req, resp, next) => {
   resp.header('Content-Type', 'application/json; charset=utf-8')
 
   const header = "source_content_type=application/json"
   const query = {
     sort: [{"date": {"order": "asc", format: "strict_date_optional_time_nanos"}}],
-    query: {match: { "name": req.query.name}},
-    size: 30
+    query: {
+      match: {
+        "name": req.query.name
+      },
+      // range: {
+      //   "date": {
+      //     "gte": req.query.range_start,
+      //     "lte": req.query.range_end
+      //   }
+      // }
+      },
+    size: req.query.size
   }
 
-  http.get(`http://elasticsearch:9200/price/_search?source=${JSON.stringify(query)}&${header}`, (res) => {
+  http.get(`${host}/price/_search?source=${JSON.stringify(query)}&${header}`, (res) => {
     let body = ''
     res.setEncoding('utf8')
     res.on('data', (chunk) => {
@@ -61,5 +186,6 @@ router.get('/search',  (req, resp, next) => {
       resp.send(err)
     })
 })
+*/
 
 module.exports = router

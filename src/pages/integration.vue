@@ -21,85 +21,72 @@
         label="アイテム名"
         :rules="[v => !!v || 'アイテムを選択してください']"
       />
-      <v-btn
-        @click="addDisplayItems"
-      >
-        <v-icon> mdi-plus </v-icon>
-      </v-btn>
-      <v-spacer/>
       <v-text-field
         v-model="size"
         label="取得データ数"
       />
-    </v-row>
-    <v-row>
-      <v-chip
-        class="chip"
-        v-for="(tag, index) in displayItems"
-        :key="tag"
-        v-if="chips[index]"
-        close
-        @click:close="chipsClose(index)"
+      <v-btn
       >
-        {{ tag }}
-      </v-chip>
+        追加
+      </v-btn>
     </v-row>
     <v-row>
-<!--      <v-menu-->
-<!--        v-model="range_menu_start"-->
-<!--        :close-on-content-click="false"-->
-<!--        offset-y-->
-<!--      >-->
-<!--        <template v-slot:activator="{ on, attrs }">-->
-<!--          <v-text-field v-model="range_start" outlined dense v-bind="attrs" v-on="on"/>-->
-<!--        </template>-->
-<!--        <v-card>-->
-<!--          <v-tabs v-model="range_tab_start">-->
-<!--            <v-tab href="#tab-1">Absolute</v-tab>-->
-<!--            <v-tab href="#tab-2">Relative</v-tab>-->
-<!--            <v-tab href="#tab-3">Now</v-tab>-->
-<!--          </v-tabs>-->
-<!--          <v-tabs-items v-model="range_tab_start">-->
-<!--            <v-tab-item value="tab-1"><v-date-picker v-model="range_start"/></v-tab-item>-->
-<!--            <v-tab-item value="tab-2">{{ range_start }}</v-tab-item>-->
-<!--            <v-tab-item value="tab-3"></v-tab-item>-->
-<!--          </v-tabs-items>-->
-<!--        </v-card>-->
-<!--      </v-menu>-->
-<!--      <v-icon>mdi-arrow-right</v-icon>-->
-<!--      <v-menu-->
-<!--        v-model="range_menu_end"-->
-<!--        :close-on-content-click="false"-->
-<!--        offset-y-->
-<!--      >-->
-<!--        <template v-slot:activator="{ on, attrs }">-->
-<!--          <v-text-field v-model="range_end" outlined dense v-bind="attrs" v-on="on"/>-->
-<!--        </template>-->
-<!--        <v-card>-->
-<!--          <v-tabs v-model="range_tab_end">-->
-<!--            <v-tab href="#tab-1">Absolute</v-tab>-->
-<!--            <v-tab href="#tab-2">Relative</v-tab>-->
-<!--            <v-tab href="#tab-3">Now</v-tab>-->
-<!--          </v-tabs>-->
-<!--          <v-tabs-items v-model="range_tab_end">-->
-<!--            <v-tab-item value="tab-1"><v-date-picker v-model="range_end"/></v-tab-item>-->
-<!--            <v-tab-item value="tab-2">{{ range_end }}</v-tab-item>-->
-<!--            <v-tab-item value="tab-3"></v-tab-item>-->
-<!--          </v-tabs-items>-->
-<!--        </v-card>-->
-<!--      </v-menu>-->
+      <v-menu
+        v-model="range_menu_start"
+        :close-on-content-click="false"
+        offset-y
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field v-model="range_start" outlined dense v-bind="attrs" v-on="on"/>
+        </template>
+        <v-card>
+          <v-tabs v-model="range_tab_start">
+            <v-tab href="#tab-1">Absolute</v-tab>
+            <v-tab href="#tab-2">Relative</v-tab>
+            <v-tab href="#tab-3">Now</v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="range_tab_start">
+            <v-tab-item value="tab-1"><v-date-picker v-model="range_start"/></v-tab-item>
+            <v-tab-item value="tab-2">{{ range_start }}</v-tab-item>
+            <v-tab-item value="tab-3"></v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-menu>
+      <v-icon>mdi-arrow-right</v-icon>
+      <v-menu
+        v-model="range_menu_end"
+        :close-on-content-click="false"
+        offset-y
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field v-model="range_end" outlined dense v-bind="attrs" v-on="on"/>
+        </template>
+        <v-card>
+          <v-tabs v-model="range_tab_end">
+            <v-tab href="#tab-1">Absolute</v-tab>
+            <v-tab href="#tab-2">Relative</v-tab>
+            <v-tab href="#tab-3">Now</v-tab>
+          </v-tabs>
+          <v-tabs-items v-model="range_tab_end">
+            <v-tab-item value="tab-1"><v-date-picker v-model="range_end"/></v-tab-item>
+            <v-tab-item value="tab-2">{{ range_end }}</v-tab-item>
+            <v-tab-item value="tab-3"></v-tab-item>
+          </v-tabs-items>
+        </v-card>
+      </v-menu>
     </v-row>
     <v-row>
-      <Graph class="graph" :size="size" :gte="range_start" :lte="range_end" :isSetRange="false"></Graph>
+      <v-col>
+        <Graph :name="name" :size="size" :gte="range_start" :lte="range_end" :isSetRange="false"></Graph>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
 export default {
-  name: "chart",
+  name: "integration",
   data: () => ({
-    // 検索フォーム用の変数
     categoryTab: 4, //タブの初期位置を素材に指定
     category: [
       '武器',
@@ -163,12 +150,8 @@ export default {
         'その他'
       ]
     ],
-    items: [],
     name: 'C/アビリティⅢ',
     size: 15,
-    isDisabled: false,
-
-    chips: [true],
 
     range_tab_start: "tab-1",
     range_tab_end: "tab-1",
@@ -177,6 +160,7 @@ export default {
     range_start: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     range_end: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
 
+    items: [],
     test: ""
   }),
   methods: {
@@ -198,22 +182,6 @@ export default {
           this.items = err
         })
     },
-    addDisplayItems() {
-      //this.displayItems.push(this.name)
-      this.$store.commit('chart/add', this.name)
-      this.chips[this.displayItems.length-1] = true
-    },
-    chipsClose(index) {
-      this.$store.commit('chart/remove', this.displayItems[index])
-      this.chips.splice(index, 1)
-      //this.displayItems.splice(index, 1)
-
-    },
-  },
-  computed: {
-    displayItems() {
-      return this.$store.getters["chart/getList"]
-    }
   },
   watch: {
     subcategorySelect: function () {
@@ -224,20 +192,10 @@ export default {
   },
   mounted() {
     this.getItemList()
-    for (const i of this.displayItems) {
-      this.chips.push(true)
-    }
   }
 }
 </script>
 
 <style scoped>
-.chip {
-  margin: 0 .3em
-}
-.graph {
-  width: 100vw;
-  padding: 1em;
-  margin-top: 1em;
-}
+
 </style>

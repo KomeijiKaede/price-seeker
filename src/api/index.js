@@ -1,34 +1,28 @@
-import express, { NextFunction } from "express"
+const express = require('express')
 
-const { Nuxt, Builder } = require('nuxt')
+// Create express instance
 const app = express()
-const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 80
 
-const config = require('../../nuxt.config')
 const apiRouter = require('./api')
 
-app.set('port', port)
+app.use(apiRouter)
 
-config.dev = !(process.env.NODE_ENV === 'production')
+app.use(express.json())
 
-app.use('/', apiRouter)
-async function start () {
+const search = require('./endpoints/search')
+app.use(search)
 
+const submit = require('./endpoints/submit')
+app.use(submit)
 
-  const nuxt = new Nuxt(config)
+const register = require('./endpoints/register')
+app.use(register)
 
-  if (config.dev) {
-    const builder = new Builder(nuxt)
-    await builder.build()
-  }
+const items = require('./endpoints/items')
+app.use(items)
 
-  app.use(nuxt.render)
-
-  //app.listen(port, host)
-}
-
-// start()
+const deleteItem = require('./endpoints/delete')
+app.use(deleteItem)
 
 module.exports = {
   path: '/api',
