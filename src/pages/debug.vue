@@ -23,7 +23,7 @@ export default {
     deleteItem() {
       if (!process.browser) return
       this.$axios.post(`${location.protocol}//${location.hostname}:${location.port}/api/delete`, {
-        index: 'price',
+        index: 'items',
         id: this.deleteId
       })
         .then(res => {

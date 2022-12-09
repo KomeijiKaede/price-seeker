@@ -8,7 +8,7 @@
       >
         <v-list-item-content>
           <v-list-item-title v-text="data.name"/>
-          <v-list-item-content v-text="data.price +' N-メセタ'"/>
+          <v-list-item-content v-text="data.price + ' N-メセタ'"/>
         </v-list-item-content>
         <v-list-item-action>
           <v-btn @click="deleteItem(data)">取り消し</v-btn>

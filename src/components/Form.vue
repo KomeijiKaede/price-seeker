@@ -129,10 +129,10 @@ export default {
       this.loading = true
       this.$axios.post(`${location.protocol}//${location.hostname}:${location.port}/api/submit`, {
         name: this.name,
-        type: this.subcategorySelect,
+        category: this.categoryTab,
+        subcategory: this.subcategorySelect,
         price: Number(this.price.replace(/,/g, ''))
-        }, null
-      )
+      }, null)
         .then(res => {
           this.$store.commit('recent/add', { name: res.data.name, price: res.data.price, id: res.data.id })
           this.$store.commit('snackbar/setSnackbar', res.data.message)

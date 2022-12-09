@@ -16,7 +16,7 @@ router.post('/delete', (req, resp, next) => {
   request.delete(options, (err, res, body) => {
     if (JSON.parse(body).result === 'deleted') {
       return resp.json({ message: '削除しました' })
-    } else return resp.status(400).json({ message: '失敗しました' })
+    } else return resp.status(400).json({ message: '失敗しました', error: err })
   })
 })
 

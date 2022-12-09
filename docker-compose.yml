@@ -5,6 +5,9 @@ services:
     build: ./
     ports:
       - "3000:3000"
+    environment:
+      - API_HOST=elasticsearch
+      - API_PORT=9200
     init: true # See https://mzqvis6akmakplpmcjx3.hatenablog.com/entry/2020/11/10/231047
 
   elasticsearch:

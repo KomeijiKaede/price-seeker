@@ -18,6 +18,7 @@
     "nuxt": "^2.15.8",
     "nuxt-highcharts": "^2.0.4",
     "request": "^2.88.2",
+    "request-promise": "^4.2.6",
     "v-money": "^0.8.1",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",

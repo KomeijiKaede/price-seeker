@@ -8,11 +8,8 @@ router.get('/items', (req, resp, next) => {
     index: 'items',
     body: {
       size: 1000,
-      query: {
-        match: {
-          'subcategory': req.query.subcategory
-        }
-      }
+      sort: [ { name: { order: 'asc' } } ],
+      query: { term: { subcategory: req.query.subcategory } }
     }
   })
     .then(res => {
@@ -22,6 +19,10 @@ router.get('/items', (req, resp, next) => {
       }
       resp.json({items})
     })
+    .catch(err => {
+      resp.status(400).json({ message: ['アイテムの取得に失敗しました'], error: err })
+    })
+    .finally(() => { next() })
 })
 
 module.exports = router

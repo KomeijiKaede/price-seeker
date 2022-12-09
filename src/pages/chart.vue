@@ -1,37 +1,104 @@
 <template>
   <v-container>
     <v-row>
-      <v-tabs v-model="categoryTab">
-        <v-tab
-          v-for="tab in category"
-          color="primary"
-        >
-          {{ tab }}
-        </v-tab>
-      </v-tabs>
-      <v-select
-        v-model="subcategorySelect"
-        :items="subcategory[categoryTab]"
-        label="アイテムの種類"
-        :rules="[v => !!v || '種類を選択してください']"
-      />
-      <v-autocomplete
-        v-model="name"
-        :items="items"
-        label="アイテム名"
-        :rules="[v => !!v || 'アイテムを選択してください']"
-      />
-      <v-btn
-        @click="addDisplayItems"
-      >
-        <v-icon> mdi-plus </v-icon>
-      </v-btn>
-      <v-spacer/>
-      <v-text-field
-        v-model="size"
-        label="取得データ数"
-      />
+      <v-col>
+        <v-card>
+          <v-container>
+            <v-tabs v-model="categoryTab">
+              <v-tab
+                v-for="tab in category"
+                color="primary"
+              >
+                {{ tab }}
+              </v-tab>
+            </v-tabs>
+            <v-row>
+              <v-select
+                v-model="subcategorySelect"
+                :items="subcategory[categoryTab]"
+                label="アイテムの種類"
+                :rules="[v => !!v || '種類を選択してください']"
+              />
+              <v-autocomplete
+                v-model="name"
+                :items="items"
+                label="アイテム名"
+                :rules="[v => !!v || 'アイテムを選択してください']"
+              />
+              <v-btn
+                @click="addDisplayItems"
+              >
+                <v-icon> mdi-plus </v-icon>
+              </v-btn>
+            </v-row>
+
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card>
+          <v-container>
+            <v-row>
+              <v-menu
+                v-model="range_menu_start"
+                :close-on-content-click="false"
+                offset-y
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field v-model="range_start" outlined dense v-bind="attrs" v-on="on"/>
+                </template>
+                <v-card>
+                  <v-tabs v-model="range_tab_start">
+                    <v-tab href="#tab-1">Absolute</v-tab>
+                    <v-tab href="#tab-2">Relative</v-tab>
+                    <v-tab href="#tab-3">Now</v-tab>
+                  </v-tabs>
+                  <v-tabs-items v-model="range_tab_start">
+                    <v-tab-item value="tab-1"><v-date-picker v-model="range_start"/></v-tab-item>
+                    <v-tab-item value="tab-2">{{ range_start }}</v-tab-item>
+                    <v-tab-item value="tab-3"></v-tab-item>
+                  </v-tabs-items>
+                </v-card>
+              </v-menu>
+              <v-icon>mdi-arrow-right</v-icon>
+              <v-menu
+                v-model="range_menu_end"
+                :close-on-content-click="false"
+                offset-y
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field v-model="range_end" outlined dense v-bind="attrs" v-on="on"/>
+                </template>
+                <v-card>
+                  <v-tabs v-model="range_tab_end">
+                    <v-tab href="#tab-1">Absolute</v-tab>
+                    <v-tab href="#tab-2">Relative</v-tab>
+                    <v-tab href="#tab-3">Now</v-tab>
+                  </v-tabs>
+                  <v-tabs-items v-model="range_tab_end">
+                    <v-tab-item value="tab-1"><v-date-picker v-model="range_end"/></v-tab-item>
+                    <v-tab-item value="tab-2">{{ range_end }}</v-tab-item>
+                    <v-tab-item value="tab-3"></v-tab-item>
+                  </v-tabs-items>
+                </v-card>
+              </v-menu>
+            </v-row>
+            <v-row>
+              <v-col>
+                <v-text-field
+                  v-model="size"
+                  label="取得データ数"
+                />
+                <v-btn>
+                  Apply
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card>
+      </v-col>
     </v-row>
+
     <v-row>
       <v-chip
         class="chip"
@@ -45,49 +112,7 @@
       </v-chip>
     </v-row>
     <v-row>
-<!--      <v-menu-->
-<!--        v-model="range_menu_start"-->
-<!--        :close-on-content-click="false"-->
-<!--        offset-y-->
-<!--      >-->
-<!--        <template v-slot:activator="{ on, attrs }">-->
-<!--          <v-text-field v-model="range_start" outlined dense v-bind="attrs" v-on="on"/>-->
-<!--        </template>-->
-<!--        <v-card>-->
-<!--          <v-tabs v-model="range_tab_start">-->
-<!--            <v-tab href="#tab-1">Absolute</v-tab>-->
-<!--            <v-tab href="#tab-2">Relative</v-tab>-->
-<!--            <v-tab href="#tab-3">Now</v-tab>-->
-<!--          </v-tabs>-->
-<!--          <v-tabs-items v-model="range_tab_start">-->
-<!--            <v-tab-item value="tab-1"><v-date-picker v-model="range_start"/></v-tab-item>-->
-<!--            <v-tab-item value="tab-2">{{ range_start }}</v-tab-item>-->
-<!--            <v-tab-item value="tab-3"></v-tab-item>-->
-<!--          </v-tabs-items>-->
-<!--        </v-card>-->
-<!--      </v-menu>-->
-<!--      <v-icon>mdi-arrow-right</v-icon>-->
-<!--      <v-menu-->
-<!--        v-model="range_menu_end"-->
-<!--        :close-on-content-click="false"-->
-<!--        offset-y-->
-<!--      >-->
-<!--        <template v-slot:activator="{ on, attrs }">-->
-<!--          <v-text-field v-model="range_end" outlined dense v-bind="attrs" v-on="on"/>-->
-<!--        </template>-->
-<!--        <v-card>-->
-<!--          <v-tabs v-model="range_tab_end">-->
-<!--            <v-tab href="#tab-1">Absolute</v-tab>-->
-<!--            <v-tab href="#tab-2">Relative</v-tab>-->
-<!--            <v-tab href="#tab-3">Now</v-tab>-->
-<!--          </v-tabs>-->
-<!--          <v-tabs-items v-model="range_tab_end">-->
-<!--            <v-tab-item value="tab-1"><v-date-picker v-model="range_end"/></v-tab-item>-->
-<!--            <v-tab-item value="tab-2">{{ range_end }}</v-tab-item>-->
-<!--            <v-tab-item value="tab-3"></v-tab-item>-->
-<!--          </v-tabs-items>-->
-<!--        </v-card>-->
-<!--      </v-menu>-->
+
     </v-row>
     <v-row>
       <Graph class="graph" :size="size" :gte="range_start" :lte="range_end" :isSetRange="false"></Graph>

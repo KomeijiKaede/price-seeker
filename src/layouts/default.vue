@@ -87,28 +87,28 @@ export default {
         {
           icon: 'mdi-form-textarea',
           title: 'Form',
-          to: '/price-form'
+          to: '/test'
         },
         {
           icon: 'mdi-chart-line',
           title: 'Chart',
           to: '/chart'
         },
-        {
-          icon: 'mdi-plus',
-          title: 'Add item',
-          to: '/add-item'
-        },
-        {
-          icon: 'mdi-cogs',
-          title: 'debug',
-          to: '/debug'
-        },
-        {
-          icon: 'mdi-chart-line',
-          title: 'test',
-          to: '/test'
-        },
+        // {
+        //   icon: 'mdi-plus',
+        //   title: 'Add item',
+        //   to: '/add-item'
+        // },
+        // {
+        //   icon: 'mdi-cogs',
+        //   title: 'debug',
+        //   to: '/debug'
+        // },
+        // {
+        //   icon: 'mdi-chart-line',
+        //   title: 'test',
+        //   to: '/test'
+        // },
         // {
         //   icon: 'mdi-chart-line',
         //   title: 'integration',
