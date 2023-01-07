@@ -11,22 +11,6 @@
 <script>
 export default {
   name: "Graph",
-  props: {
-    size: {
-      type: Number,
-      default: 3
-    },
-    gte: {
-      type: String
-    },
-    lte: {
-      Type: String
-    },
-    isSetRange: {
-      Type: Boolean,
-      default: false
-    }
-  },
   data: () => ({
     watchers: [
       'options'
@@ -34,7 +18,10 @@ export default {
 
     /* highchart option */
     options: {
-      chart: { type: 'line' },
+      chart: {
+        type: 'line',
+        zoomType: 'x'
+      },
       title: { text: '' },
       xAxis: {
         type: 'datetime',
@@ -48,6 +35,26 @@ export default {
         title: { text: 'Price' },
         min: 1000
       },
+      credits: {
+        enabled: false
+      },
+      annotations: [{
+        draggable: '',
+        labelOptions: {
+          backgroundColor: 'rgba(206,26,26,0.5)',
+          verticalAlign: 'top',
+          y: 15
+        },
+        labels: [{
+          point: {
+            xAxis: 0,
+            yAxis: 0,
+            x: 1656131816100,
+            y: 278000,
+          },
+          text: '新リージョン'
+        }],
+      }],
 
       plotOptions: {
         series: {
@@ -72,17 +79,10 @@ export default {
     async getData(name, index) {
       if (!process.browser) return
 
-      let query = {
-        name: name,
-        size: this.size,
-      }
-      if (this.isSetRange) {
-        query.gte = this.gte
-        query.lte = this.lte
-      }
-
       const resp = await this.$axios.$get(`${location.protocol}//${location.hostname}:${location.port}/api/search`, {
-        params: query
+        params: {
+          name: name
+        }
       })
 
       this.options.series.splice(index, this.options.series.length, { name: resp.name, data: resp.items })

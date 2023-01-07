@@ -1,193 +1,68 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
-        <v-card>
-          <v-container>
-            <v-tabs v-model="categoryTab">
-              <v-tab
-                v-for="tab in category"
-                color="primary"
-              >
-                {{ tab }}
-              </v-tab>
-            </v-tabs>
-            <v-row>
+      <v-card>
+        <v-tabs v-model="categoryTab">
+          <v-tab
+            v-for="tab in category"
+            color="primary"
+          >
+            {{ tab }}
+          </v-tab>
+        </v-tabs>
+        <v-container>
+          <v-row class="ml-1">
+            <v-col class="item">
               <v-select
                 v-model="subcategorySelect"
                 :items="subcategory[categoryTab]"
                 label="アイテムの種類"
                 :rules="[v => !!v || '種類を選択してください']"
               />
+            </v-col>
+            <v-col>
               <v-autocomplete
                 v-model="name"
                 :items="items"
                 label="アイテム名"
                 :rules="[v => !!v || 'アイテムを選択してください']"
               />
-              <v-btn
-                @click="addDisplayItems"
-              >
-                <v-icon> mdi-plus </v-icon>
-              </v-btn>
-            </v-row>
-
-          </v-container>
-        </v-card>
-      </v-col>
-      <v-col>
-        <v-card>
-          <v-container>
-            <v-row>
-              <v-menu
-                v-model="range_menu_start"
-                :close-on-content-click="false"
-                offset-y
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field v-model="range_start" outlined dense v-bind="attrs" v-on="on"/>
-                </template>
-                <v-card>
-                  <v-tabs v-model="range_tab_start">
-                    <v-tab href="#tab-1">Absolute</v-tab>
-                    <v-tab href="#tab-2">Relative</v-tab>
-                    <v-tab href="#tab-3">Now</v-tab>
-                  </v-tabs>
-                  <v-tabs-items v-model="range_tab_start">
-                    <v-tab-item value="tab-1"><v-date-picker v-model="range_start"/></v-tab-item>
-                    <v-tab-item value="tab-2">{{ range_start }}</v-tab-item>
-                    <v-tab-item value="tab-3"></v-tab-item>
-                  </v-tabs-items>
-                </v-card>
-              </v-menu>
-              <v-icon>mdi-arrow-right</v-icon>
-              <v-menu
-                v-model="range_menu_end"
-                :close-on-content-click="false"
-                offset-y
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-text-field v-model="range_end" outlined dense v-bind="attrs" v-on="on"/>
-                </template>
-                <v-card>
-                  <v-tabs v-model="range_tab_end">
-                    <v-tab href="#tab-1">Absolute</v-tab>
-                    <v-tab href="#tab-2">Relative</v-tab>
-                    <v-tab href="#tab-3">Now</v-tab>
-                  </v-tabs>
-                  <v-tabs-items v-model="range_tab_end">
-                    <v-tab-item value="tab-1"><v-date-picker v-model="range_end"/></v-tab-item>
-                    <v-tab-item value="tab-2">{{ range_end }}</v-tab-item>
-                    <v-tab-item value="tab-3"></v-tab-item>
-                  </v-tabs-items>
-                </v-card>
-              </v-menu>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  v-model="size"
-                  label="取得データ数"
-                />
-                <v-btn>
-                  Apply
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row>
-      <v-chip
-        class="chip"
-        v-for="(tag, index) in displayItems"
-        :key="tag"
-        v-if="chips[index]"
-        close
-        @click:close="chipsClose(index)"
-      >
-        {{ tag }}
-      </v-chip>
+            </v-col>
+            <v-col class="ma-1">
+              <v-btn @click="addDisplayItems" color="primary" large><v-icon> mdi-plus </v-icon></v-btn>
+            </v-col>
+          </v-row>
+          <v-row class="ma-3">
+            <v-chip
+              class="ma-1"
+              v-for="(tag, index) in displayItems"
+              :key="tag"
+              v-if="chips[index]"
+              close
+              @click:close="chipsClose(index)"
+            >
+              {{ tag }}
+            </v-chip>
+          </v-row>
+        </v-container>
+      </v-card>
     </v-row>
     <v-row>
-
     </v-row>
     <v-row>
-      <Graph class="graph" :size="size" :gte="range_start" :lte="range_end" :isSetRange="false"></Graph>
+      <Graph class="graph mt-3 pa-3"/>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import category from "../static/category";
+
 export default {
   name: "chart",
   data: () => ({
-    // 検索フォーム用の変数
     categoryTab: 4, //タブの初期位置を素材に指定
-    category: [
-      '武器',
-      '防具',
-      'コスチューム/パーツ/武器迷彩',
-      '消費アイテム',
-      '素材',
-      'その他'
-    ],
     subcategorySelect: 'OPカプセル',
-    subcategory: [
-      // 武器
-      [
-        'ソード',
-        'ワイヤードランス',
-        'パルチザン',
-        'ツインダガー',
-        'ダブルセイバー',
-        'ナックル',
-        'カタナ',
-        'デュアルブレード',
-        'アサルトライフル',
-        'ランチャー',
-        'ツインマシンガン',
-        'バレットボウ',
-        'ロッド',
-        'タリス',
-        'ジェットブーツ',
-        'タクト',
-      ],
-      // 防具
-      [],
-      // コスチューム/パーツ/武器迷彩
-      [
-        '武器迷彩',
-        'コスチューム',
-        'パーツ',
-        'その他'
-      ],
-      // 消費アイテム
-      [
-        'ロビーアクション',
-        'アウターウェア',
-        'ベースウェア',
-        'インナーウェア',
-        'セットウェア',
-        'アクセサリー',
-        'その他'
-      ],
-      // 素材
-      [
-        'OPカプセル',
-        'トリガー',
-        'その他'
-      ],
-      // その他
-      [
-        '潜在能力開放代用材',
-        '限界突破代用材',
-        'ミュージックディスク',
-        'その他'
-      ]
-    ],
     items: [],
     name: 'C/アビリティⅢ',
     size: 15,
@@ -195,30 +70,17 @@ export default {
 
     chips: [true],
 
-    range_tab_start: "tab-1",
-    range_tab_end: "tab-1",
-    range_menu_start: "",
-    range_menu_end: "",
-    range_start: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-    range_end: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-
     test: ""
   }),
   methods: {
     getItemList() {
       if (!process.browser) return
-      this.$axios.get(`${location.protocol}//${location.hostname}:${location.port}/api/item_list`, {
+      this.$axios.get(`${location.protocol}//${location.hostname}:${location.port}/api/items`, {
         params: {
           subcategory: this.subcategorySelect
         }
       })
-        .then(res => {
-          this.items = []
-          this.resp = res
-          for (const item of res.data.hits.hits) {
-            this.items.push(item._source.name)
-          }
-        })
+        .then(res => this.items = res.data.items)
         .catch(err => {
           this.items = err
         })
@@ -238,6 +100,12 @@ export default {
   computed: {
     displayItems() {
       return this.$store.getters["chart/getList"]
+    },
+    category() {
+      return category.category
+    },
+    subcategory() {
+      return category.subcategory
     }
   },
   watch: {
@@ -257,12 +125,7 @@ export default {
 </script>
 
 <style scoped>
-.chip {
-  margin: 0 .3em
-}
 .graph {
   width: 100vw;
-  padding: 1em;
-  margin-top: 1em;
 }
 </style>

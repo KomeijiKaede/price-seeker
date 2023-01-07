@@ -87,7 +87,7 @@ export default {
         {
           icon: 'mdi-form-textarea',
           title: 'Form',
-          to: '/test'
+          to: '/price-form'
         },
         {
           icon: 'mdi-chart-line',
@@ -99,11 +99,11 @@ export default {
         //   title: 'Add item',
         //   to: '/add-item'
         // },
-        // {
-        //   icon: 'mdi-cogs',
-        //   title: 'debug',
-        //   to: '/debug'
-        // },
+        {
+          icon: 'mdi-cogs',
+          title: 'debug',
+          to: '/debug'
+        },
         // {
         //   icon: 'mdi-chart-line',
         //   title: 'test',

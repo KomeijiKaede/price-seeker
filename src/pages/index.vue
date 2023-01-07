@@ -11,7 +11,6 @@
           <ul>
             <li>Form - アイテムの値段を登録</li>
             <li>Chart - 値段の推移をグラフで表示</li>
-            <li>Add item - 記録するアイテムを追加</li>
           </ul>
         </v-card-text>
       </v-card>

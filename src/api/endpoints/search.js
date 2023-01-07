@@ -7,20 +7,12 @@ router.get('/search', async (req, resp, next) => {
   const search = await es.search({
     index: 'price',
     body: {
-      size: req.query.size,
+      size: 1000,
       sort: [{"date": {"order": "desc", format: "strict_date_optional_time_nanos"}}],
       query: {
         bool: {
           must: {
             term: { 'name': req.query.name },
-          },
-          filter: {
-            range: {
-              date: {
-                gte: req.query.gte,
-                lte: req.query.lte
-              }
-            }
           }
         }
       }
